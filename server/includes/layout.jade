@@ -1,11 +1,10 @@
 doctype html
-html
- head
-  title Multivision
-  link(href="/favicon.ico", rel="shortcut icon", type="image/x-icon")
-  link(rel='stylesheet', href="/css/bootstrap.css")
-  link(rel='stylesheet', href="/vendor/toastr/toastr.css")
-  link(rel='stylesheet', href="/css/site.css")
- body(ng-app="app")
-  block main-content
-  include scripts
+html(lang="en" ng-app="appSpace")
+	head
+		meta(charset="UTF-8")
+	title Artists Management System
+	link(rel="stylesheet" href="css/style.css")
+	link(href="/favicon.ico", rel="shortcut icon", type="image/x-icon")
+	body
+		block body
+	include scripts

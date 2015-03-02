@@ -1,0 +1,6 @@
+section(class="artistpage")
+	div(class = "search" ng-controller="ListController")
+		h1 Artist Directory
+		label Search:
+		ul
+			li(ng-repeat="record in data") {{ record.name }}

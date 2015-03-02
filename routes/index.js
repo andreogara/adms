@@ -6,4 +6,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('partials/', function(req, res) {
+    res.render('partials/' + req.params.name);
+};
 module.exports = router;
