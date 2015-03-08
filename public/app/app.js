@@ -9,6 +9,10 @@ $locationProvider.html5Mode({
 					templateUrl : 'partials/list',
 					controller : 'ListController'
 				}).
+				when('/details', {
+					templateUrl : 'partials/details',
+					controller : 'DetailsController'
+				}).
 				otherwise({
 						redirectTo: '/'
 				});

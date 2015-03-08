@@ -9,7 +9,6 @@ module.exports = function(app, config, path){
 	}
 	// view engine setup
 	app.set('views', path.join(config.rootPath, '/server/views'));
-	console.log(path.join(config.rootPath, '/server/views'));
 	app.set('view engine', 'jade'); 
 	app.use(logger('dev'));
 	app.use(bodyParser.json());
@@ -22,5 +21,4 @@ module.exports = function(app, config, path){
 	app.use(bodyParser.urlencoded({ extended: false }));
 	app.use(cookieParser());
 	app.use(express.static(path.join(config.rootPath, '/public')));
-	console.log(path.join(config.rootPath, '/public'));
 }

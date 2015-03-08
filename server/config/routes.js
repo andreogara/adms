@@ -3,9 +3,8 @@ module.exports = function(app, db){
 		res.render('index');
 	});
 
-	app.get('/partials/:name', function(req, res) {
-		var name = req.params.name;
-		res.render('partials/' + name);
+	app.get('/partials/*', function(req, res) {
+			res.render('partials/' + req.params[0]);
 	});
 	
 	app.get("/data", function (req, res){
