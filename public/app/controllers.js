@@ -1,59 +1,52 @@
 var artistSpace = angular.module('artistSpace', ['ngAnimate']);
 //Initializing the data and populating the offline database
 artistSpace.factory("dataFactory", ['$http', function($http){
-	 var urlBase = '/data';
-     var dataFactory = {};
-	
-    dataFactory.getArtists = function () {
-       if (!window.indexedDB) {
+	var urlBase = "/data";
+	var offlineData;
+	 return {
+		 getData : function(){
+			 if(!window.indexedDB)
 			return $http.get(urlBase);
-		}
-		else{
-			var customData = [{name:"Roger"}, {name:"Rafa"}];
-			var request = indexedDB.open("daemonbits", 55);
-			request.onerror = function(event) {
-				console.log("Why didn't you allow my web app to use IndexedDB?!");
-			};
-			request.onsuccess = function(e) {
-				var db = e.target.result,
-					promise = $http.get(urlBase);
+			else{
+				var promise = $http.get(urlBase);
 				promise.then(function(result){
-					var transaction = db.transaction(["artists"],"readwrite"),
-						store = transaction.objectStore("artists");
-					for (var i in result.data){
-						console.log("adding item number "+ i);
-						store.add(result.data[i]);
+					var data = result.data;
+					var request = indexedDB.open("daemonbits", 72);
+					request.onerror = function(event) {
+						console.log("Error creating IndexedDB");
+					};
+					request.onupgradeneeded = function(e){
+						var db = e.target.result;
+						if (db.objectStoreNames.contains('artists')) {
+							db.deleteObjectStore('artists');
+						}
+						var storage = db.createObjectStore("artists", {autoIncrement: true});
+						for (var i in result.data)
+							storage.add(result.data[i])
+						storage.openCursor().onsuccess = function(event){
+							var cursor = event.target.result;
+						}
 					}
+				}, function(err){
+					console.log(err);
+				}).then(function(){
+					return offlineData;
 				});
-			};
-			request.onupgradeneeded = function(e){
-				var db = e.target.result;
-				if (db.objectStoreNames.contains('artists')) {
-					db.deleteObjectStore('artists');
-				}
-				var storage = db.createObjectStore("artists", {autoIncrement: true});
 			}
-		} 
-
-    };
-	return dataFactory;
+		 }
+	 }
 }]);
 //Controller for the list Page
 artistSpace.controller("ListController", ['$scope', '$http', '$routeParams', '$rootScope', 'dataFactory', function ($scope, $http, $routeParams, $rootScope, dataFactory){
 	$scope.artistsOrder = "reknown";
 	$scope.query = "";
-	getArtists();
-	function getArtists(){
-		if (!window.indexedDB){
-			dataFactory.getArtists().success(function(data){
-				$scope.artists = data;
-			});
-		}
-		else{
-			dataFactory.getArtists();
-		}
-		
+	if (!window.indexedDB){
+	dataFactory.getData().then(function(result){
+		$scope.artists = result.data;
+	});
 	}
+	else
+		console.log(dataFactory.getData());
 }]);
 
 artistSpace.controller("DetailsController", ['$scope', '$http', '$routeParams', '$rootScope' , function ($scope, $http, $routeParams, $rootScope){
